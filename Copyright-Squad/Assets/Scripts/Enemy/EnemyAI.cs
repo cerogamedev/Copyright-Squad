@@ -15,6 +15,7 @@ namespace Pathfinding
 
 		private Transform player;
 		private SpriteRenderer spr;
+		private GameObject bulwark;
 		void OnEnable()
 		{
 			ai = GetComponent<IAstarAI>();
@@ -41,16 +42,21 @@ namespace Pathfinding
 		{
 			if (target != null && ai != null) ai.destination = target.position;
 
+			AILogic();
+			Flip();
+			FindBulwark();
+		}
+		public void AILogic()
+        {
 			RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleLayer);
 			if (hit.collider != null)
-            {
+			{
 				target = player;
-            }
+			}
 			else
-            {
+			{
 				target = null;
 			}
-			Flip();
 		}
 		private void Flip()
         {
@@ -70,7 +76,28 @@ namespace Pathfinding
 				else
 					return;
 			}
-
 		}
+		public void FindBulwark()
+        {
+			GameObject[] allBulwarks = GameObject.FindGameObjectsWithTag("Obstacle");
+			float distanceToClosestBulwark = Mathf.Infinity;
+			foreach (GameObject currentBulwark in allBulwarks)
+            {
+				float distanceToBulwark = (currentBulwark.transform.position - this.transform.position).sqrMagnitude;
+				if (distanceToBulwark<distanceToClosestBulwark)
+                {
+					distanceToClosestBulwark = distanceToBulwark;
+					bulwark = currentBulwark;
+                }				
+            }				
+		}
+		private System.Collections.IEnumerator InBulwark()
+        {
+			float newX = (player.position.x - bulwark.transform.position.x);
+			float newY = (player.position.y - bulwark.transform.position.y);
+			float slope = newY / newX;
+			yield return new WaitForSeconds(2f);
+        }
+
 	}
 }

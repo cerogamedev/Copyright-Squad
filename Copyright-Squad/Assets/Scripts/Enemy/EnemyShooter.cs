@@ -51,7 +51,6 @@ public class EnemyShooter : MonoBehaviour
 
     private void Shoot()
     {
-        // Ateþ edildiðinde çaðrýlacak fonksiyon
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
         Vector2 direction = (player.transform.position - bulletSpawnPoint.position).normalized;
         bullet.GetComponent<Bullet>().SetDirection(direction);
